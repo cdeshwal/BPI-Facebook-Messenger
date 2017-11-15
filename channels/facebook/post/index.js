@@ -43,15 +43,29 @@ function main(params) {
     );
 
     const facebookParams = extractFacebookParams(params);
+    const facebookParams_startTyping = extractFacebookParams(params);
+    facebookParams_startTyping.sender_action ='typing_on'
+    delete facebookParams_startTyping.message
     const postUrl = params.url || 'https://graph.facebook.com/v2.6/me/messages';
-
-    return postFacebook(
+    
+    var promise_1 = postFacebook(
+      facebookParams_startTyping,
+      postUrl,
+      auth.facebook.page_access_token
+      
+    )
+    
+    var promise_2= promise_1.then(postFacebook(
+     
       facebookParams,
       postUrl,
       auth.facebook.page_access_token
-    )
+    ))
       .then(resolve)
       .catch(reject);
+    
+    return promise_2
+    
   });
 }
 
